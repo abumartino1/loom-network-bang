@@ -1,0 +1,115 @@
+npm install tronweb
+
+await new Promise((resolve) => {
+  const tronWebState = {
+    installed: !!window.tronWeb,
+    loggedIn: window.tronWeb && window.tronWeb.ready && window.tronWeb.fullNode.host != 'http://127.0.0.1'
+  }
+
+  if (tronWebState.installed) {
+    this.tronLinkStatus = tronWebState
+  }
+
+  if (tronWebState.loggedIn) {
+    this.tronWeb = window.tronWeb
+    this.tronAddrBase58 = window.tronWeb.defaultAddress.base58
+    this.tronCurrentNetwork = window.tronWeb.fullNode.host
+  } else {
+    this.userTronAddr = null
+    this.tronCurrentNetwork = null
+  }
+
+  return resolve()
+})
+
+this.client = new Client(
+  this.chainId,
+  this.writeUrl,
+  this.readUrl
+)
+
+this.client.txMiddleware = createDefaultTxMiddleware(this.client, privateKey)
+
+const addressMapper = await AddressMapper.createAsync(this.client, this.loomLocalAddress)
+if (!(await addressMapper.hasMappingAsync(this.loomLocalAddress))) {
+
+    await addressMapper.addIdentityMappingAsync(
+      this.loomLocalAddress,
+      this.trxAddrObj,
+      signer
+    )
+  } catch (error) {
+    console.log('This Loom account has been mapped to a different Tron address.')
+    throw (error)
+  }
+} else {
+  console.log('Address mapping already exists.')
+}
+
+this.tronGateway = await this.getContract(TRX_GATEWAY_ADDRESS)
+this.loomGateway = await Contracts.TronTransferGateway.createAsync(
+  this.client,
+  this.loomLocalAddress
+)
+
+this.loomTRX = new this.loomWeb3.eth.Contract(erc20abi.abi, TRX_COIN_ADDRESS_HEX)
+
+await this.tronGateway.sendToken().send({ 'from': this.tronAddrBase58, 'callValue': TRX_AMOUNT })
+
+
+
+
+await this.loomTRX.methods.approve(LOOM_GATEWAY_ADDRESS, TRX_AMOUNT).send({ from: this.loomAddressInHex })
+
+const maxRetries = 10
+let retries = 0
+const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
+
+
+
+
+
+
+
+
+onst initialShastaBalance = await this.tronWeb.trx.getBalance(this.tronAddrBase58)
+let curren = initialShastaBalance
+while (initialShastaBalance == currentShastaBalance && retries < maxRetries) {
+  currentShastaBalance = await this.tronWeb.trx.getBalance(this.tronAddrBase58)
+  await delay(2000)
+  retries++
+}
+if (retries == maxRetries) {
+  console.log('Waiting is over... No change!')
+} else {
+  console.log('Balance updated after ' + retries + ' retries. Refreshing balances')
+  await this.refreshBalance()
+}
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
